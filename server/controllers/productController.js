@@ -5,34 +5,45 @@ const { calculateStatus } = require('../utils/warrantyHelper');
 // @route   POST /api/products
 // @access  Private
 const createProduct = async (req, res) => {
-  const {
-    productName,
-    brand,
-    category,
-    purchaseDate,
-    warrantyPeriod,
-    price,
-    serialNumber,
-    notes,
-  } = req.body;
+  try {
+    const {
+      productName,
+      brand,
+      category,
+      purchaseDate,
+      warrantyPeriod,
+      price,
+      serialNumber,
+      notes,
+    } = req.body;
 
-  const invoiceUrl = req.file ? `/uploads/${req.file.filename}` : '';
+    const invoiceUrl = req.file ? `/uploads/${req.file.filename}` : '';
 
-  const product = new Product({
-    user: req.user._id,
-    productName,
-    brand,
-    category,
-    purchaseDate,
-    warrantyPeriod,
-    price,
-    serialNumber,
-    invoiceUrl,
-    notes,
-  });
+    if (!req.user) {
+      res.status(401);
+      throw new Error('User not found in request');
+    }
 
-  const createdProduct = await product.save();
-  res.status(201).json(createdProduct);
+    const product = new Product({
+      user: req.user._id,
+      productName,
+      brand,
+      category,
+      purchaseDate,
+      warrantyPeriod: Number(warrantyPeriod),
+      price: price === '' ? 0 : Number(price),
+      serialNumber,
+      invoiceUrl,
+      notes,
+    });
+
+    const createdProduct = await product.save();
+    res.status(201).json(createdProduct);
+  } catch (error) {
+    console.error('Create Product Error:', error.message);
+    res.status(res.statusCode === 200 ? 500 : res.statusCode);
+    throw error;
+  }
 };
 
 // @desc    Get all products for logged in user

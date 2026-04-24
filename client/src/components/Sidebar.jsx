@@ -11,11 +11,18 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, onClose }) => {
   const { user, logout } = useAuth();
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-64 glass rounded-none border-y-0 border-l-0 z-40 hidden lg:flex flex-col p-6">
+    <>
+      {/* Mobile Overlay */}
+      <div 
+        className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity duration-300 lg:hidden ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        onClick={onClose}
+      ></div>
+
+      <aside className={`fixed left-0 top-0 h-screen w-64 glass rounded-none border-y-0 border-l-0 z-50 flex flex-col p-6 transition-transform duration-300 transform ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
       <div className="flex items-center gap-3 mb-10 px-2">
         <ShieldCheck size={32} className="text-primary" />
         <h1 className="text-xl font-bold tracking-tight font-['Outfit']">WarrantyVault</h1>
@@ -24,6 +31,7 @@ const Sidebar = () => {
       <nav className="flex-1 space-y-2">
         <NavLink 
           to="/dashboard" 
+          onClick={onClose}
           className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
         >
           <LayoutDashboard size={20} />
@@ -32,6 +40,7 @@ const Sidebar = () => {
         
         <NavLink 
           to="/add-product" 
+          onClick={onClose}
           className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
         >
           <PlusCircle size={20} />
@@ -40,6 +49,7 @@ const Sidebar = () => {
 
         <NavLink 
           to="/notifications" 
+          onClick={onClose}
           className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
         >
           <Bell size={20} />
@@ -52,6 +62,7 @@ const Sidebar = () => {
 
         <NavLink 
           to="/settings" 
+          onClick={onClose}
           className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
         >
           <Settings size={20} />
@@ -65,6 +76,7 @@ const Sidebar = () => {
             </div>
             <NavLink 
               to="/admin" 
+              onClick={onClose}
               className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
             >
               <ShieldCheck size={20} />
@@ -94,6 +106,7 @@ const Sidebar = () => {
         </button>
       </div>
     </aside>
+    </>
   );
 };
 

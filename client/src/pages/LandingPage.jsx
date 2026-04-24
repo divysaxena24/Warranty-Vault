@@ -202,7 +202,7 @@ const LandingPage = () => {
             <p className="text-gray-400 mb-8">Have a question or want to request a feature? We'd love to hear from you.</p>
             
             <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
                   <label className="text-sm font-semibold mb-2 block text-gray-300">Name</label>
                   <input type="text" className="w-full bg-black/50 border border-white/10 rounded-xl p-4 text-white focus:outline-none focus:border-[#38bdf8] transition-colors" placeholder="John Doe" />

@@ -12,9 +12,13 @@ import LandingPage from './pages/LandingPage';
 import AdminDashboard from './pages/AdminDashboard';
 import Notifications from './pages/Notifications';
 import Settings from './pages/Settings';
+import { ShieldCheck } from 'lucide-react';
+
+import { Menu, X } from 'lucide-react';
 
 const Layout = ({ children }) => {
   const { user, loading } = useAuth();
+  const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
   
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center bg-dark-bg">
@@ -23,15 +27,33 @@ const Layout = ({ children }) => {
   );
 
   return (
-    <div className="min-h-screen bg-[#090b10] flex relative overflow-hidden font-['Inter']">
+    <div className="min-h-screen bg-[#090b10] flex flex-col lg:flex-row relative overflow-hidden font-['Inter']">
       {/* Global Ambient Glows */}
       <div className="fixed top-0 right-0 w-[800px] h-[800px] bg-[#1a4f54] rounded-full blur-[150px] opacity-20 mix-blend-screen pointer-events-none -translate-y-1/2 translate-x-1/2 z-0"></div>
       <div className="fixed bottom-0 left-0 w-[600px] h-[600px] bg-[#4a1c38] rounded-full blur-[150px] opacity-20 mix-blend-screen pointer-events-none translate-y-1/4 -translate-x-1/4 z-0"></div>
 
-      {user && <Sidebar />}
+      {user && (
+        <>
+          {/* Mobile Header */}
+          <div className="lg:hidden flex items-center justify-between p-4 glass rounded-none border-x-0 border-t-0 relative z-50">
+            <div className="flex items-center gap-2">
+              <ShieldCheck size={24} className="text-primary" />
+              <span className="font-bold font-['Outfit']">WarrantyVault</span>
+            </div>
+            <button 
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              className="p-2 glass text-white"
+            >
+              {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
+          <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+        </>
+      )}
+      
       <div className={`flex-1 flex flex-col relative z-10 ${user ? 'lg:ml-64' : ''}`}>
         {!user && <Navbar />}
-        <main className={`flex-1 ${user ? 'p-8' : ''}`}>
+        <main className={`flex-1 ${user ? 'p-4 md:p-8' : ''}`}>
           {children}
         </main>
       </div>

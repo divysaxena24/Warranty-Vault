@@ -48,6 +48,10 @@ const productSchema = mongoose.Schema(
     notes: {
       type: String,
     },
+    expiryWarningSent: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
@@ -55,13 +59,13 @@ const productSchema = mongoose.Schema(
 );
 
 // Pre-save hook to calculate expiryDate and status
-productSchema.pre('save', function (next) {
+productSchema.pre('save', async function () {
   if (this.purchaseDate && this.warrantyPeriod) {
     const purchase = new Date(this.purchaseDate);
     this.expiryDate = new Date(purchase.setMonth(purchase.getMonth() + this.warrantyPeriod));
 
     const today = new Date();
-    const diffTime = this.expiryDate - today;
+    const diffTime = this.expiryDate.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
     if (diffDays < 0) {
@@ -72,7 +76,6 @@ productSchema.pre('save', function (next) {
       this.status = 'active';
     }
   }
-  next();
 });
 
 module.exports = mongoose.model('Product', productSchema);
