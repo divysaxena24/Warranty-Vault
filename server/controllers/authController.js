@@ -14,6 +14,16 @@ const registerUser = async (req, res) => {
     throw new Error('User already exists');
   }
 
+  // Strong password validation
+  const isStrongPassword = (p) => {
+    return p.length >= 8 && /[A-Z]/.test(p) && /[a-z]/.test(p) && /[0-9]/.test(p) && /[!@#$%^&*(),.?":{}|<>]/.test(p);
+  };
+
+  if (!isStrongPassword(password)) {
+    res.status(400);
+    throw new Error('Password is not strong enough. It must be at least 8 characters and include uppercase, lowercase, numbers, and special characters.');
+  }
+
   const user = await User.create({
     name,
     email,

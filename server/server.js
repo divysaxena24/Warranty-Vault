@@ -37,6 +37,7 @@ app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/maintenance', maintenanceRoutes);
+app.use('/api/admin', require('./routes/adminRoutes'));
 
 // Error handling
 app.use(notFound);

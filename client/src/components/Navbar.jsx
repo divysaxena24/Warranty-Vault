@@ -12,40 +12,31 @@ const Navbar = () => {
     navigate('/login');
   };
 
+  if (user) return null; // Defensive check, but App.jsx handles this
+
   return (
-    <nav className="glass sticky top-0 z-50 rounded-none border-t-0 border-x-0">
-      <div className="container nav-container">
-        <Link to="/" className="flex items-center gap-2 text-xl font-bold text-primary nav-link">
-          <ShieldCheck size={28} />
-          <span>WarrantyVault</span>
+    <nav className="bg-transparent absolute top-0 w-full z-50">
+      <div className="max-w-[1400px] mx-auto px-6 h-24 flex items-center justify-between">
+        <Link to="/" className="text-3xl font-black font-['Outfit'] tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-[#4ade80] via-[#38bdf8] to-[#f472b6]">
+          warrantyvault
         </Link>
 
-        {user ? (
-          <div className="nav-links">
-            <Link to="/" className="nav-link flex items-center gap-1">
-              <LayoutDashboard size={18} />
-              <span>Dashboard</span>
-            </Link>
-            <Link to="/add-product" className="nav-link flex items-center gap-1">
-              <PlusCircle size={18} />
-              <span>Add Asset</span>
-            </Link>
-            <div className="flex items-center gap-4 ml-4 pl-4 border-l border-white/10">
-              <span className="text-sm font-medium">{user.name}</span>
-              <button onClick={handleLogout} className="text-text-muted hover:text-expired transition-colors">
-                <LogOut size={20} />
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className="nav-links">
-            <Link to="/login" className="nav-link">Login</Link>
-            <Link to="/register" className="btn-primary">Register</Link>
-          </div>
-        )}
+        <div className="hidden md:flex items-center gap-8 text-[15px] font-medium text-gray-300">
+          <a href="#features" className="hover:text-white transition-colors">Features</a>
+          <a href="#pricing" className="hover:text-white transition-colors">Pricing</a>
+          <a href="#about" className="hover:text-white transition-colors">About</a>
+          <a href="#contact" className="hover:text-white transition-colors">Contact</a>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <Link to="/login" className="px-5 py-2.5 rounded-lg border border-white/10 text-sm font-semibold hover:bg-white/5 transition-all text-white">
+            Sign In
+          </Link>
+        </div>
       </div>
     </nav>
   );
 };
 
 export default Navbar;
+

@@ -3,7 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import StatusBadge from '../components/StatusBadge';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Trash2, Calendar, FileText, Settings, Plus, Loader2 } from 'lucide-react';
+import { ArrowLeft, Trash2, Calendar, FileText, Settings, Plus, Loader2, Clock, DollarSign, Tag, ExternalLink, Upload } from 'lucide-react';
+
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -172,14 +173,16 @@ const ProductDetails = () => {
             </div>
 
             {showMaintForm && (
-              <form onSubmit={handleMaintSubmit} className="mb-8 p-4 bg-white/5 rounded-lg border border-primary/20">
-                <h3 className="text-sm font-bold mb-4">New Maintenance Record</h3>
-                <div className="space-y-4">
+              <form onSubmit={handleMaintSubmit} className="mb-8 p-6 glass rounded-lg border border-[#38bdf8]/20 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-[#38bdf8]/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
+                <h3 className="text-sm font-bold mb-4 uppercase tracking-wider text-white/70 relative z-10">New Maintenance Record</h3>
+                <div className="space-y-4 relative z-10">
                   <input 
                     type="date" 
                     required 
                     value={maintData.serviceDate}
                     onChange={(e) => setMaintData({...maintData, serviceDate: e.target.value})}
+                    className="input-field"
                   />
                   <input 
                     type="text" 
@@ -187,6 +190,7 @@ const ProductDetails = () => {
                     required 
                     value={maintData.description}
                     onChange={(e) => setMaintData({...maintData, description: e.target.value})}
+                    className="input-field"
                   />
                   <input 
                     type="number" 
@@ -194,10 +198,11 @@ const ProductDetails = () => {
                     required 
                     value={maintData.cost}
                     onChange={(e) => setMaintData({...maintData, cost: e.target.value})}
+                    className="input-field"
                   />
-                  <div className="flex gap-2">
-                    <button type="submit" className="btn-primary flex-1 py-2 text-sm">Add</button>
-                    <button type="button" onClick={() => setShowMaintForm(false)} className="bg-white/10 px-3 py-2 rounded-lg text-sm">Cancel</button>
+                  <div className="flex gap-4 pt-2">
+                    <button type="submit" className="btn-primary flex-1 py-3 text-sm">Add Record</button>
+                    <button type="button" onClick={() => setShowMaintForm(false)} className="px-6 py-3 border border-white/10 hover:bg-white/10 rounded-xl transition-colors font-semibold text-sm">Cancel</button>
                   </div>
                 </div>
               </form>
