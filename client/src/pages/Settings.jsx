@@ -1,10 +1,61 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { User, Mail, Shield, Key, Bell } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { User, Mail, Shield, Key, Bell, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Settings = () => {
-  const { user } = useAuth();
+  const { user, updateProfile } = useAuth();
+  
+  // Profile State
+  const [name, setName] = useState(user?.name || '');
+  const [profileLoading, setProfileLoading] = useState(false);
+  const [profileMessage, setProfileMessage] = useState({ type: '', text: '' });
+
+  // Security State
+  const [passwords, setPasswords] = useState({
+    current: '',
+    new: '',
+    confirm: ''
+  });
+  const [securityLoading, setSecurityLoading] = useState(false);
+  const [securityMessage, setSecurityMessage] = useState({ type: '', text: '' });
+
+  const handleProfileUpdate = async (e) => {
+    e.preventDefault();
+    setProfileLoading(true);
+    setProfileMessage({ type: '', text: '' });
+    
+    try {
+      await updateProfile({ name });
+      setProfileMessage({ type: 'success', text: 'Profile updated successfully!' });
+    } catch (err) {
+      setProfileMessage({ type: 'error', text: err.response?.data?.message || 'Failed to update profile' });
+    } finally {
+      setProfileLoading(false);
+      setTimeout(() => setProfileMessage({ type: '', text: '' }), 3000);
+    }
+  };
+
+  const handlePasswordUpdate = async (e) => {
+    e.preventDefault();
+    if (passwords.new !== passwords.confirm) {
+      return setSecurityMessage({ type: 'error', text: 'Passwords do not match' });
+    }
+    
+    setSecurityLoading(true);
+    setSecurityMessage({ type: '', text: '' });
+    
+    try {
+      await updateProfile({ password: passwords.new });
+      setSecurityMessage({ type: 'success', text: 'Password updated successfully!' });
+      setPasswords({ current: '', new: '', confirm: '' });
+    } catch (err) {
+      setSecurityMessage({ type: 'error', text: err.response?.data?.message || 'Failed to update password' });
+    } finally {
+      setSecurityLoading(false);
+      setTimeout(() => setSecurityMessage({ type: '', text: '' }), 3000);
+    }
+  };
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
@@ -21,11 +72,16 @@ const Settings = () => {
               Profile Information
             </h2>
             
-            <form className="space-y-6">
+            <form onSubmit={handleProfileUpdate} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="text-sm font-semibold mb-2 block ml-1 text-text-muted">Full Name</label>
-                  <input type="text" className="input-field" defaultValue={user?.name || ''} />
+                  <input 
+                    type="text" 
+                    className="input-field" 
+                    value={name} 
+                    onChange={(e) => setName(e.target.value)}
+                  />
                 </div>
                 <div>
                   <label className="text-sm font-semibold mb-2 block ml-1 text-text-muted">Email Address</label>
@@ -35,7 +91,25 @@ const Settings = () => {
                   </div>
                 </div>
               </div>
-              <button type="button" className="btn-primary py-2.5 px-6">Save Changes</button>
+              
+              <AnimatePresence>
+                {profileMessage.text && (
+                  <motion.div 
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className={`flex items-center gap-2 text-sm p-3 rounded-lg ${profileMessage.type === 'success' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}
+                  >
+                    {profileMessage.type === 'success' ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
+                    {profileMessage.text}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <button disabled={profileLoading} className="btn-primary py-2.5 px-6 flex items-center gap-2">
+                {profileLoading && <Loader2 className="animate-spin" size={18} />}
+                {profileLoading ? 'Saving...' : 'Save Changes'}
+              </button>
             </form>
           </div>
 
@@ -45,22 +119,58 @@ const Settings = () => {
               Security & Password
             </h2>
             
-            <form className="space-y-6">
+            <form onSubmit={handlePasswordUpdate} className="space-y-6">
               <div>
                 <label className="text-sm font-semibold mb-2 block ml-1 text-text-muted">Current Password</label>
-                <input type="password" className="input-field" placeholder="••••••••" />
+                <input 
+                  type="password" 
+                  className="input-field" 
+                  placeholder="••••••••"
+                  value={passwords.current}
+                  onChange={(e) => setPasswords({...passwords, current: e.target.value})}
+                />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="text-sm font-semibold mb-2 block ml-1 text-text-muted">New Password</label>
-                  <input type="password" className="input-field" placeholder="••••••••" />
+                  <input 
+                    type="password" 
+                    className="input-field" 
+                    placeholder="••••••••"
+                    value={passwords.new}
+                    onChange={(e) => setPasswords({...passwords, new: e.target.value})}
+                  />
                 </div>
                 <div>
                   <label className="text-sm font-semibold mb-2 block ml-1 text-text-muted">Confirm New Password</label>
-                  <input type="password" className="input-field" placeholder="••••••••" />
+                  <input 
+                    type="password" 
+                    className="input-field" 
+                    placeholder="••••••••"
+                    value={passwords.confirm}
+                    onChange={(e) => setPasswords({...passwords, confirm: e.target.value})}
+                  />
                 </div>
               </div>
-              <button type="button" className="btn-primary py-2.5 px-6">Update Password</button>
+
+              <AnimatePresence>
+                {securityMessage.text && (
+                  <motion.div 
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className={`flex items-center gap-2 text-sm p-3 rounded-lg ${securityMessage.type === 'success' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}
+                  >
+                    {securityMessage.type === 'success' ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
+                    {securityMessage.text}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <button disabled={securityLoading} className="btn-primary py-2.5 px-6 flex items-center gap-2">
+                {securityLoading && <Loader2 className="animate-spin" size={18} />}
+                {securityLoading ? 'Updating...' : 'Update Password'}
+              </button>
             </form>
           </div>
         </motion.div>
@@ -103,3 +213,4 @@ const Settings = () => {
 };
 
 export default Settings;
+
