@@ -4,7 +4,8 @@ const sendEmail = async (options) => {
   // For production, you would use a real SMTP service like Gmail, SendGrid, etc.
   // For development, you can use a test account or environment variables.
   const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST || 'smtp.ethereal.email',
+    service: process.env.EMAIL_SERVICE,
+    host: process.env.EMAIL_HOST,
     port: process.env.EMAIL_PORT || 587,
     auth: {
       user: process.env.EMAIL_USER,

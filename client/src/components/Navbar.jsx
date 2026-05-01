@@ -1,31 +1,59 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { ShieldCheck, LogOut, LayoutDashboard, PlusCircle } from 'lucide-react';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [scrolled, setScrolled] = useState(false);
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToSection = (sectionId) => {
+    if (location.pathname !== '/') {
+      navigate('/#' + sectionId);
+      // The actual scroll will happen via LandingPage's useEffect or browser behavior if handled
+    } else {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
   };
 
-  if (user) return null; // Defensive check, but App.jsx handles this
+  if (user) return null;
 
   return (
-    <nav className="bg-transparent absolute top-0 w-full z-50">
-      <div className="max-w-[1400px] mx-auto px-6 h-24 flex items-center justify-between">
+    <nav 
+      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
+        scrolled 
+          ? 'bg-[#0a0a0c]/80 backdrop-blur-md border-b border-white/5 h-20' 
+          : 'bg-transparent h-24'
+      }`}
+    >
+      <div className="max-w-[1400px] mx-auto px-6 h-full flex items-center justify-between">
         <Link to="/" className="text-3xl font-black font-['Outfit'] tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-[#4ade80] via-[#38bdf8] to-[#f472b6]">
           warrantyvault
         </Link>
 
         <div className="hidden md:flex items-center gap-8 text-[15px] font-medium text-gray-300">
-          <a href="#features" className="hover:text-white transition-colors">Features</a>
-          <a href="#pricing" className="hover:text-white transition-colors">Pricing</a>
-          <a href="#about" className="hover:text-white transition-colors">About</a>
-          <a href="#contact" className="hover:text-white transition-colors">Contact</a>
+          <button onClick={() => scrollToSection('features')} className="hover:text-white transition-colors">Features</button>
+          <button onClick={() => scrollToSection('pricing')} className="hover:text-white transition-colors">Pricing</button>
+          <button onClick={() => scrollToSection('about')} className="hover:text-white transition-colors">About</button>
+          <button onClick={() => scrollToSection('contact')} className="hover:text-white transition-colors">Contact</button>
         </div>
 
         <div className="flex items-center gap-4">

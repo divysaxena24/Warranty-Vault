@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
-import { ShieldCheck, User, Mail, Lock, UserPlus, CheckCircle2, XCircle } from 'lucide-react';
+import { ShieldCheck, User, Mail, Lock, UserPlus, CheckCircle2, XCircle, ArrowLeft } from 'lucide-react';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -80,8 +80,15 @@ const Register = () => {
         animate={{ opacity: 1, scale: 1 }}
         className="glass p-8 w-full max-w-lg shadow-2xl relative overflow-hidden"
       >
+        <Link 
+          to="/" 
+          className="absolute top-6 left-6 text-text-muted hover:text-white transition-colors flex items-center gap-2 text-sm font-medium group"
+        >
+          <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+          Back
+        </Link>
 
-        <div className="text-center mb-8 relative">
+        <div className="text-center mb-8 relative mt-4">
           <div className="inline-flex items-center justify-center p-3 bg-primary/10 rounded-2xl mb-4">
             <ShieldCheck size={40} className="text-primary" />
           </div>
